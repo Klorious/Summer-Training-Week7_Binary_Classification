@@ -8,6 +8,27 @@ import pandas as pd
 
 EXPECTED_MODELS = ("VGG16", "ResNet18", "ResNet50")
 REFERENCE_SIZE = 100
+CASE_REPLACEMENTS = {
+    # Manual review replacement. Keep this explicit so rerunning the selector
+    # cannot silently restore the rejected example.
+    ("ResNet18", "disagreement", "p5_seed23"): "p1_seed10",
+}
+REVIEWED_CASE_NOTES = {
+    ("ResNet18", "p1_seed10"): {
+        "reference_reason": (
+            "道路可見度 2 分、障礙物可辨識度 0 分、影像清晰度 1 分、"
+            "遮擋程度 2 分、場景真實性 0 分，合計 5/10；"
+            "圖片模糊、場景真實性低下且障礙物難以辨識。"
+        ),
+        "analysis_reason": (
+            "模型可能較重視道路清楚可見且幾乎無遮擋，未充分考慮"
+            "圖片模糊、障礙物難以辨識與場景真實性低下，因此將人工 "
+            "Bad 錯判為 Good。"
+        ),
+        "boundary_case": "False",
+        "possible_distribution_shift": "True",
+    },
+}
 
 
 def parse_args():
@@ -103,6 +124,71 @@ def choose_disagreements(frame):
     return selected
 
 
+def apply_case_replacements(cases, source_frame):
+    cases = cases.copy()
+
+    for (model, case_type, old_image_id), new_image_id in CASE_REPLACEMENTS.items():
+        old_mask = (
+            (cases["model"] == model)
+            & (cases["case_type"] == case_type)
+            & (cases["image_id"] == old_image_id)
+        )
+        if old_mask.sum() != 1:
+            raise ValueError(
+                f"Expected exactly one case to replace: "
+                f"{model}/{case_type}/{old_image_id}"
+            )
+
+        candidate = source_frame.loc[
+            (source_frame["model"] == model)
+            & (source_frame["image_id"] == new_image_id)
+        ].copy()
+        if len(candidate) != 1:
+            raise ValueError(
+                f"Replacement candidate must be unique: {model}/{new_image_id}"
+            )
+
+        candidate_row = candidate.iloc[0]
+        expected_match = 1 if case_type == "agreement" else 0
+        if int(candidate_row["match"]) != expected_match:
+            raise ValueError(
+                f"Replacement {model}/{new_image_id} is not a {case_type} case"
+            )
+
+        model_ids = set(cases.loc[cases["model"] == model, "image_id"])
+        if new_image_id in model_ids:
+            raise ValueError(
+                f"Replacement {model}/{new_image_id} is already selected"
+            )
+
+        target_index = cases.index[old_mask][0]
+        for column in source_frame.columns:
+            if column in cases.columns:
+                cases.at[target_index, column] = candidate_row[column]
+        cases.at[target_index, "case_type"] = case_type
+        cases.at[target_index, "high_confidence_error"] = False
+
+        print(
+            f"Applied reviewed replacement: "
+            f"{model}/{old_image_id} -> {new_image_id}"
+        )
+
+    return cases
+
+
+def apply_reviewed_case_notes(cases):
+    cases = cases.copy()
+    for (model, image_id), notes in REVIEWED_CASE_NOTES.items():
+        mask = (cases["model"] == model) & (cases["image_id"] == image_id)
+        if mask.sum() != 1:
+            raise ValueError(
+                f"Reviewed case note target must be unique: {model}/{image_id}"
+            )
+        for column, value in notes.items():
+            cases.loc[mask, column] = value
+    return cases
+
+
 def validate_inputs(predictions, reference):
     required_prediction_columns = {
         "image_id",
@@ -184,9 +270,11 @@ def main():
         selections.extend([agreements, disagreements])
 
     cases = pd.concat(selections, ignore_index=True)
+    cases = apply_case_replacements(cases, frame)
     cases["analysis_reason"] = ""
     cases["boundary_case"] = ""
     cases["possible_distribution_shift"] = ""
+    cases = apply_reviewed_case_notes(cases)
 
     columns = [
         "model",
