@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.env
+.netrc
+/wandb/
+data/raw/
+outputs/checkpoints/
+outputs/logs/
+*.pt
+*.pth
+*.ckpt
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.synctex.gz

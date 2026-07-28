@@ -1,0 +1,4 @@
+# Force XeLaTeX when the project is compiled through latexmk.
+$pdf_mode = 5;
+$max_repeat = 3;
+$xelatex = 'xelatex -interaction=nonstopmode -halt-on-error -file-line-error %O %S';

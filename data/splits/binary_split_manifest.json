@@ -1,0 +1,54 @@
+{
+  "method": "Fixed-seed stratified split by Good/Bad label and score 1-10",
+  "seed": 20260725,
+  "label_rule": "Bad = 1-7; Good = 8-10",
+  "image_path_root": "data/raw/",
+  "summary": {
+    "all": {
+      "total": 500,
+      "Bad": 203,
+      "Good": 297,
+      "score_9": 112,
+      "score_7": 118,
+      "score_8": 133,
+      "score_10": 52,
+      "score_6": 64,
+      "score_5": 20,
+      "score_4": 1
+    },
+    "reference": {
+      "total": 100,
+      "Bad": 50,
+      "Good": 50,
+      "score_5": 5,
+      "score_6": 16,
+      "score_7": 29,
+      "score_8": 22,
+      "score_9": 19,
+      "score_10": 9
+    },
+    "train": {
+      "total": 300,
+      "Bad": 115,
+      "Good": 185,
+      "score_4": 1,
+      "score_5": 11,
+      "score_6": 36,
+      "score_7": 67,
+      "score_10": 32,
+      "score_8": 83,
+      "score_9": 70
+    },
+    "val": {
+      "total": 100,
+      "Bad": 38,
+      "Good": 62,
+      "score_5": 4,
+      "score_6": 12,
+      "score_7": 22,
+      "score_10": 11,
+      "score_8": 28,
+      "score_9": 23
+    }
+  }
+}
