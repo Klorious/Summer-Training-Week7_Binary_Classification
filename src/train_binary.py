@@ -44,7 +44,7 @@ def parse_args():
     parser.add_argument(
         "--smoke-test",
         action="store_true",
-        help="Use 16 train/validation images and run only two epochs.",
+        help="Use 16 train/validation images and run only one epoch.",
     )
     parser.add_argument(
         "--run-name-suffix",
@@ -208,7 +208,7 @@ def main():
     config["wandb_project"] = args.wandb_project
     config["smoke_test"] = bool(args.smoke_test)
     if args.smoke_test:
-        config["epochs"] = 2
+        config["epochs"] = 1
 
     checkpoint_path = build_checkpoint_path(config, smoke_test=args.smoke_test)
     manifest_path = build_manifest_path(config, smoke_test=args.smoke_test)
@@ -275,7 +275,7 @@ def main():
     if args.smoke_test:
         train_dataset = Subset(train_dataset, range(min(16, len(train_dataset))))
         val_dataset = Subset(val_dataset, range(min(16, len(val_dataset))))
-        print("Smoke test enabled: at most 16 train/validation images, two epochs")
+        print("Smoke test enabled: at most 16 train/validation images, one epoch")
 
     loader_generator = torch.Generator()
     loader_generator.manual_seed(int(config["random_seed"]))
