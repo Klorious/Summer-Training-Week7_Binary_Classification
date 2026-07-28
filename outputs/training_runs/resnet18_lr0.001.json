@@ -1,0 +1,22 @@
+{
+  "task": "binary_classification",
+  "formal_run": true,
+  "model_name": "resnet18",
+  "display_name": "ResNet18",
+  "learning_rate": 0.001,
+  "input_size": 224,
+  "best_epoch": 5,
+  "best_val_f1": 0.8321167883211679,
+  "checkpoint_path": "outputs/checkpoints/best_resnet18_lr0.001.pth",
+  "wandb_run_id": "dm8ovhqt",
+  "wandb_run_url": "https://wandb.ai/klorius-/training-Unit7-Binary-413410020/runs/dm8ovhqt",
+  "wandb_entity": "klorius-",
+  "wandb_project": "training-Unit7-Binary-413410020",
+  "python_version": "3.11.15",
+  "pytorch_version": "2.6.0+cu124",
+  "torchvision_version": "0.21.0+cu124",
+  "random_seed": 20260725,
+  "config_path": "configs/resnet18_lr0.001.yaml",
+  "checkpoint_selection_metric": "validation F1",
+  "human_reference_usage": "final comparison only"
+}

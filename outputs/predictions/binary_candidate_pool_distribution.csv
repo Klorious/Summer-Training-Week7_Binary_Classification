@@ -1,0 +1,4 @@
+model,predicted_bad,predicted_good,total,bad_ratio,good_ratio
+VGG16,154,346,500,0.308,0.692
+ResNet18,124,376,500,0.248,0.752
+ResNet50,110,390,500,0.22,0.78

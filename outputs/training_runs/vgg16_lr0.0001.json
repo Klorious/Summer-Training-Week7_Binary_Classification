@@ -1,0 +1,22 @@
+{
+  "task": "binary_classification",
+  "formal_run": true,
+  "model_name": "vgg16",
+  "display_name": "VGG16",
+  "learning_rate": 0.0001,
+  "input_size": 224,
+  "best_epoch": 29,
+  "best_val_f1": 0.8444444444444444,
+  "checkpoint_path": "outputs/checkpoints/best_vgg16_lr0.0001.pth",
+  "wandb_run_id": "1xptjn7v",
+  "wandb_run_url": "https://wandb.ai/klorius-/training-Unit7-Binary-413410020/runs/1xptjn7v",
+  "wandb_entity": "klorius-",
+  "wandb_project": "training-Unit7-Binary-413410020",
+  "python_version": "3.11.15",
+  "pytorch_version": "2.6.0+cu124",
+  "torchvision_version": "0.21.0+cu124",
+  "random_seed": 20260725,
+  "config_path": "configs/vgg16.yaml",
+  "checkpoint_selection_metric": "validation F1",
+  "human_reference_usage": "final comparison only"
+}
